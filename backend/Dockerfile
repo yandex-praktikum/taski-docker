@@ -1,5 +1,5 @@
 # Создать образ на основе базового слоя,
-# который содержит файлы ОС и интерпретатор Python 3.9.
+#docker run --rm -it -p 8000:8000 --name taski_frontend_test taski_frontend# который содержит файлы ОС и интерпретатор Python 3.9.
 FROM python:3.9
 
 # Переходим в образе в директорию /app: в ней будем хранить код проекта.
@@ -14,6 +14,7 @@ COPY requirements.txt .
 
 # Выполнить в текущей директории команду терминала
 # для установки зависимостей.
+RUN pip install gunicorn==20.1.0
 RUN pip install -r requirements.txt --no-cache-dir
 
 # Скопировать всё необходимое содержимое 
@@ -22,4 +23,4 @@ RUN pip install -r requirements.txt --no-cache-dir
 COPY . .
 
 # При старте контейнера запустить сервер разработки.
-CMD ["python", "manage.py", "runserver", "0:8000"] 
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "backend.wsgi"]
