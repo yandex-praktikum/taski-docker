@@ -1,0 +1,6 @@
+# frontend/.dockerignore
+node_modules
+build
+.idea
+.vscode
+.env

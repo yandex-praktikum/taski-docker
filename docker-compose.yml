@@ -1,0 +1,37 @@
+# Файл docker-compose.yml
+
+# Версия docker-compose
+version: '3'
+
+# Перечень volume
+volumes:
+  pg_data:
+  static:
+
+# Перечень контейнеров
+services:
+  db: # контейнер БД
+    image: postgres:13.10
+    env_file: .env
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  backend: # контейнер с бэкендом
+    build: ./backend/
+    env_file: .env
+    volumes:
+      - static:/backend_static
+
+  frontend:
+    env_file: .env
+    build: ./frontend/
+    volumes:
+      - static:/frontend_static
+    command: cp -r /app/build/. /frontend_static/
+
+  gateway:
+    build: ./gateway/
+    volumes:
+      - static:/staticfiles/
+    ports:
+      - 8000:80
