@@ -1,0 +1,32 @@
+version: '3'
+
+volumes:
+  pg_data_prod:
+  static_prod:
+
+services:
+  db_taski:
+    image: postgres:13
+    env_file: .env
+    volumes:
+      - pg_data_prod:/var/lib/postgresql/data
+  backend:
+    image: youzoff/taski_backend
+    env_file: .env
+    volumes:
+      - static_prod:/backend_static
+
+  frontend:
+    env_file: .env
+    image: youzoff/taski_frontend
+    command: cp -r /app/build/. /frontend_static/
+    volumes:
+      - static_prod:/frontend_static
+
+  gateway:
+    image: youzoff/taski_gateway
+    env_file: .env
+    volumes:
+      - static_prod:/staticfiles
+    ports:
+      - 8000:80
