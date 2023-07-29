@@ -1,0 +1,39 @@
+version: '3'
+
+volumes:
+  pg_data:
+  # Новый volume — для статических файлов
+  static:
+
+services:
+  db:
+    image: postgres:13.10
+    env_file: .env
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+  backend:
+    build: ./backend/
+    env_file: .env
+    # Тут подключаем volume к backend
+    volumes:
+      - static:/backend_static
+  frontend:
+    env_file: .env
+    build: ./frontend/
+    command: cp -r /app/build/. /frontend_static/
+    # Тут подключаем volume к frontend
+    volumes:
+      - static:/frontend_static
+# Добавляем новый контейнер: gateway.
+  gateway:
+    # Сбилдить и запустить образ, 
+    # описанный в Dockerfile в папке gateway
+    build: ./gateway/
+    # А тут подключаем volume со статикой к gateway
+    volumes:
+      - static:/staticfiles/
+    # Ключ ports устанавливает
+    # перенаправление всех запросов с порта 8000 хоста
+    # на порт 80 контейнера.
+    ports:
+      - 8000:80
