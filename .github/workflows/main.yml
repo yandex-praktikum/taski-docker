@@ -10,7 +10,22 @@ jobs:
   tests:
     # Разворачиваем окружение:
     runs-on: ubuntu-latest
-
+    # Блок services аналогичен docker-compose.yml
+    services:
+      postgres:
+        image: postgres:13.10
+        # Указываем имя тестовой базы, имя и пароль пользователя в открытом виде,
+        # ведь эта база будет работать только во время прогона тестов
+        env:
+          POSTGRES_USER: django_user
+          POSTGRES_PASSWORD: django_password
+          POSTGRES_DB: django_db
+        ports:
+          - 5432:5432
+        # Эта конструкция описывает проверку готовности сервиса postgres
+        # Если её не будет, то тесты могут запуститься раньше, чем сервер PostgreSQL
+        # В результате тесты опять решат, что базы нет, — и упадут
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
     # Копируем код проекта
     - name: Check out code
@@ -30,6 +45,15 @@ jobs:
         pip install -r ./backend/requirements.txt
     # Запускаем flake8
     - name: Test with flake8 and django tests
+      # Добавляем env-переменные для доступа к БД
+      env:
+        POSTGRES_USER: django_user
+        POSTGRES_PASSWORD: django_password
+        POSTGRES_DB: django_db
+        # Сервер БД запущен в Docker, но его порт проброшен на хост
+        # Поэтому подключаемся к 127.0.0.1:5432
+        DB_HOST: 127.0.0.1
+        DB_PORT: 5432
       # Вызываем flake8 и указываем ему,
       # что нужно проверить файлы только в папке backend/
       run: |
