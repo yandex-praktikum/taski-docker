@@ -6,6 +6,7 @@ version: '3'
 # Перечень volume
 volumes:
   taski_pg_data:
+  static:
 
 # Перечень контейнеров
 services:
@@ -27,6 +28,8 @@ services:
     # Какие контейнеры нужно запустить до старта этого контейнера:
     depends_on:
       - taski_db
+    volumes:
+      - static:/backend_static
   # Имя третьего контейнера. Это контейнер с фронтендом
   frontend:
     env_file: .env
@@ -38,5 +41,7 @@ services:
     # Ключ ports устанавливает
     # перенаправление всех запросов с порта 8000 хоста
     # на порт 80 контейнера.
+    volumes:
+      - static:/staticfiles/
     ports:
       - 8000:80
