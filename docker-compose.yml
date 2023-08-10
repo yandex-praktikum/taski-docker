@@ -1,0 +1,33 @@
+# Файл docker-compose.yml
+
+# Версия docker-compose
+version: '3'
+
+# Перечень volume
+volumes:
+  taski_pg_data:
+
+# Перечень контейнеров
+services:
+  # Имя и описание первого контейнера; имя выбирает разработчик. 
+  # Это контейнер БД
+  db:
+    # Из какого образа запустить контейнер:
+    image: postgres:13.10
+    # Файл (или список файлов) с переменными окружения
+    env_file: .env
+    # Какой volume подключить для этого контейнера
+    volumes:
+      - taski_pg_data:/var/lib/postgresql/data
+  # Имя и описание контейнера с бэкендом
+  backend:
+    # Из какого Dockerfile собирать образ для этого контейнера:
+    build: ./backend/
+    env_file: .env
+    # Какие контейнеры нужно запустить до старта этого контейнера:
+    depends_on:
+      - taski_db
+  # Имя третьего контейнера. Это контейнер с фронтендом
+  frontend:
+    env_file: .env
+    build: ./frontend/
