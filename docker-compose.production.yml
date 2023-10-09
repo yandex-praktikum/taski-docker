@@ -1,4 +1,3 @@
-# docker-compose.production.yml
 version: '3'
 
 volumes:
