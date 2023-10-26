@@ -176,7 +176,7 @@ jobs:
         username: ${{ secrets.USER }}
         key: ${{ secrets.SSH_KEY }}
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
-        args: -o "IdentitiesOnly=yes"
+        ssh_options: "-o IdentitiesOnly=yes"
         source: "docker-compose.production.yml"
         target: "taski"
     - name: Executing remote ssh commands to deploy
@@ -186,7 +186,7 @@ jobs:
         username: ${{ secrets.USER }}
         key: ${{ secrets.SSH_KEY }}
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
-        args: -o "IdentitiesOnly=yes"
+        ssh_options: "-o IdentitiesOnly=yes"
         # Параметр script передаёт в action appleboy/ssh-action команды,
         # которые нужно выполнить на сервере, 
         # с которым установлено соединение
