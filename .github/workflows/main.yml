@@ -175,7 +175,6 @@ jobs:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USER }}
         key: ${{ secrets.SSH_KEY }}
-        passphrase: ${{ secrets.SSH_PASSPHRASE }}
         ssh_options: "-o IdentitiesOnly=yes"
         source: "docker-compose.production.yml"
         target: "taski"
@@ -185,7 +184,6 @@ jobs:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USER }}
         key: ${{ secrets.SSH_KEY }}
-        passphrase: ${{ secrets.SSH_PASSPHRASE }}
         ssh_options: "-o IdentitiesOnly=yes"
         # Параметр script передаёт в action appleboy/ssh-action команды,
         # которые нужно выполнить на сервере, 
