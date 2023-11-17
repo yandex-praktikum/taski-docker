@@ -8,6 +8,7 @@ on:
 jobs:
   tests:
     runs-on: ubuntu-latest
+
     services:
       postgres:
         image: postgres:13.10
