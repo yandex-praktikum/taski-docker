@@ -2,7 +2,7 @@ version: '3'
 
 volumes:
   pg_data:
-  static: 
+  static:
 
 services:
   db:
@@ -28,7 +28,7 @@ services:
 
   gateway:
     build: ./gateway/
-    volumes: 
+    volumes:
       - static:/staticfiles/
     ports:
-      - 8000:80 
+      - 8000:80
