@@ -117,14 +117,14 @@ jobs:
             # Параметр script передаёт в action appleboy/ssh-action команды,
             # которые нужно выполнить на сервере,
             # с которым установлено соединение
-      script: |
-        cd taski
-        # Выполняет pull образов с Docker Hub
-        sudo docker compose -f docker-compose.production.yml pull
-        # Перезапускает все контейнеры в Docker Compose
-        sudo docker compose -f docker-compose.production.yml down
-        sudo docker compose -f docker-compose.production.yml up -d
-        # Выполняет миграции и сбор статики
-        sudo docker compose -f docker-compose.production.yml exec backend python manage.py migrate
-        sudo docker compose -f docker-compose.production.yml exec backend python manage.py collectstatic
-        sudo docker compose -f docker-compose.production.yml exec backend cp -r /app/collected_static/. /backend_static/static/
+  script: |
+    cd taski
+    # Выполняет pull образов с Docker Hub
+    sudo docker compose -f docker-compose.production.yml pull
+    # Перезапускает все контейнеры в Docker Compose
+    sudo docker compose -f docker-compose.production.yml down
+    sudo docker compose -f docker-compose.production.yml up -d
+    # Выполняет миграции и сбор статики
+    sudo docker compose -f docker-compose.production.yml exec backend python manage.py migrate
+    sudo docker compose -f docker-compose.production.yml exec backend python manage.py collectstatic
+    sudo docker compose -f docker-compose.production.yml exec backend cp -r /app/collected_static/. /backend_static/static/
