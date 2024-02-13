@@ -15,9 +15,9 @@ jobs:
         # Указываем имя тестовой базы, имя и пароль пользователя в открытом виде,
         # ведь эта база будет работать только во время прогона тестов
         env:
-          POSTGRES_USER: django_user
-          POSTGRES_PASSWORD: django_password
-          POSTGRES_DB: django_db
+          POSTGRES_USER: ${{ POSGRES_USER }}
+          POSTGRES_PASSWORD: ${{ POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ POSTGRES_DB }}
         ports:
           - 5432:5432
         # Эта конструкция описывает проверку готовности сервиса postgres
@@ -40,9 +40,9 @@ jobs:
     - name: Test with flake8 and django tests
       # Добавляем env-переменные для доступа к БД
       env:
-        POSTGRES_USER: django_user
-        POSTGRES_PASSWORD: django_password
-        POSTGRES_DB: django_db
+        POSTGRES_USER: ${{ POSGRES_USER }}
+        POSTGRES_PASSWORD: ${{ POSTGRES_PASSWORD }}
+        POSTGRES_DB: ${{ POSTGRES_DB }}
         # Сервер БД запущен в Docker, но его порт проброшен на хост
         # Поэтому подключаемся к 127.0.0.1:5432
         DB_HOST: 127.0.0.1
@@ -85,7 +85,7 @@ jobs:
           # Для каждого пересобранного образа
           # устанавливаем тег latest, чтобы потом
           # на сервере и в docker-compose.yml не указывать версию
-          tags: ${{ secrets.DOCKER_USERNAME }}/taski_backend:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/kittygram_backend:latest
   frontend_tests:
     runs-on: ubuntu-latest
 
@@ -128,7 +128,7 @@ jobs:
         with:
           context: ./frontend/
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/taski_frontend:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/kittygram_frontend:latest
   build_gateway_and_push_to_docker_hub:
     name: Push gateway Docker image to DockerHub
     runs-on: ubuntu-latest
@@ -145,10 +145,10 @@ jobs:
       - name: Push to DockerHub
         uses: docker/build-push-action@v4
         with:
-          context: ./gateway/
+          context: ./nginx/
           push: true
           # Тут вместо username должен быть ваш логин на Docker Hub
-          tags: ${{ secrets.DOCKER_USERNAME }}/taski_gateway:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/kittygram_gateway:latest
 
   deploy:
     runs-on: ubuntu-latest
@@ -170,7 +170,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           source: "docker-compose.production.yml"
-          target: "taski"
+          target: "infra_sprint1"
       - name: Executing remote ssh commands to deploy
         uses: appleboy/ssh-action@master
         with:
