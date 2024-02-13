@@ -8,21 +8,15 @@ on:
 jobs:
   tests:
     runs-on: ubuntu-latest
-    # Блок services аналогичен docker-compose.yml
     services:
       postgres:
         image: postgres:13.10
-        # Указываем имя тестовой базы, имя и пароль пользователя в открытом виде,
-        # ведь эта база будет работать только во время прогона тестов
         env:
           POSTGRES_USER: ${{ POSGRES_USER }}
           POSTGRES_PASSWORD: ${{ POSTGRES_PASSWORD }}
           POSTGRES_DB: ${{ POSTGRES_DB }}
         ports:
           - 5432:5432
-        # Эта конструкция описывает проверку готовности сервиса postgres
-        # Если её не будет, то тесты могут запуститься раньше, чем сервер PostgreSQL
-        # В результате тесты опять решат, что базы нет, — и упадут
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
     - uses: actions/checkout@v3
@@ -36,15 +30,11 @@ jobs:
         python -m pip install --upgrade pip 
         pip install flake8==6.0.0 flake8-isort==6.0.0
         pip install -r ./backend/requirements.txt
-    # Этот шаг дополним переменными для доступа к БД
     - name: Test with flake8 and django tests
-      # Добавляем env-переменные для доступа к БД
       env:
         POSTGRES_USER: ${{ POSGRES_USER }}
         POSTGRES_PASSWORD: ${{ POSTGRES_PASSWORD }}
         POSTGRES_DB: ${{ POSTGRES_DB }}
-        # Сервер БД запущен в Docker, но его порт проброшен на хост
-        # Поэтому подключаемся к 127.0.0.1:5432
         DB_HOST: 127.0.0.1
         DB_PORT: 5432
       run: |
@@ -57,34 +47,19 @@ jobs:
     needs: tests
     steps:
       - name: Check out the repo
-        # Получение исходного кода из репозитория
         uses: actions/checkout@v3
       - name: Set up Docker Buildx
-        # Установка сборщика контейнеров Docker
         uses: docker/setup-buildx-action@v2
       - name: Login to Docker
-        # Авторизация на Docker Hub
         uses: docker/login-action@v2
-        # При помощи with передаём в action параметры username и password
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-          # Хорошо ли держать логин и пароль прямо в коде workflow?
-          # Нет, это нехорошо
       - name: Push to DockerHub
-        # Одновременный билд и пуш образа в Docker Hub
         uses: docker/build-push-action@v4
         with:
-          # Параметр context: ./backend/ указывает, что нужный Dockerfile
-          # находится в ./backend/
           context: ./backend/
-          # Параметр push: true указывает, что образ нужно не только собрать,
-          # но и отправить на Docker Hub
           push: true
-          # В параметре tags задаётся название и тег для образа.
-          # Для каждого пересобранного образа
-          # устанавливаем тег latest, чтобы потом
-          # на сервере и в docker-compose.yml не указывать версию
           tags: ${{ secrets.DOCKER_USERNAME }}/kittygram_backend:latest
   frontend_tests:
     runs-on: ubuntu-latest
@@ -92,20 +67,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Set up nodeJS
-        # Это готовый воркфлоу для установки Node.js на раннер
         uses: actions/setup-node@v3
         with:
-          # Это параметр воркфлоу, указывающий нужную версию Node.js
           node-version: 18
 
       - name: Install dependencies
-        # Эта команда устанавливает зависимости для фронтенда
         run: |
           cd frontend/
           npm ci
 
       - name: Test frontend
-        # Запускаем тесты
         run: |
           cd frontend/
           npm run test
@@ -147,23 +118,19 @@ jobs:
         with:
           context: ./nginx/
           push: true
-          # Тут вместо username должен быть ваш логин на Docker Hub
           tags: ${{ secrets.DOCKER_USERNAME }}/kittygram_gateway:latest
 
   deploy:
     runs-on: ubuntu-latest
     needs:
-      # Дождёмся билда всех образов Taski
       - build_and_push_to_docker_hub
       - build_frontend_and_push_to_docker_hub
       - build_gateway_and_push_to_docker_hub
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
-        # Копируем docker-compose.production.yml на продакшен-сервер
       - name: Copy docker-compose.yml via ssh
         uses: appleboy/scp-action@master
-        # Передаём параметры для action appleboy/scp-action:
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
@@ -178,11 +145,8 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          # Параметр script передаёт в action appleboy/ssh-action команды,
-          # которые нужно выполнить на сервере,
-          # с которым установлено соединение
           script: |
-            cd taski
+            cd infra_sprint
             # Выполняет pull образов с Docker Hub
             sudo docker compose -f docker-compose.production.yml pull
             # Перезапускает все контейнеры в Docker Compose
