@@ -1,4 +1,4 @@
-name: Main Taski workflow
+name: Main Kittygram workflow
 
 on:
   push:
@@ -12,7 +12,7 @@ jobs:
       postgres:
         image: postgres:13.10
         env:
-          POSTGRES_USER: ${{ POSGRES_USER }}
+          POSTGRES_USER: ${{ POSTGRES_USER }}
           POSTGRES_PASSWORD: ${{ POSTGRES_PASSWORD }}
           POSTGRES_DB: ${{ POSTGRES_DB }}
         ports:
@@ -32,7 +32,7 @@ jobs:
         pip install -r ./backend/requirements.txt
     - name: Test with flake8 and django tests
       env:
-        POSTGRES_USER: ${{ POSGRES_USER }}
+        POSTGRES_USER: ${{ POSTGRES_USER }}
         POSTGRES_PASSWORD: ${{ POSTGRES_PASSWORD }}
         POSTGRES_DB: ${{ POSTGRES_DB }}
         DB_HOST: 127.0.0.1
