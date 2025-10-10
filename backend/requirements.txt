@@ -1,10 +1,4 @@
-Django==3.2.25
-djangorestframework==3.14.0
-djoser==2.2.3
-webcolors==1.13
-psycopg2-binary==2.9.9
-Pillow==10.4.0
-pytest==6.2.5
-pytest-django==4.5.2
-pytest-pythonpath==0.8.1
-PyYAML==6.0.2
+Django==3.2.3
+djangorestframework==3.12.4
+django-cors-headers==3.13.0
+psycopg2-binary==2.9.11
