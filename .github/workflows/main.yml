@@ -68,7 +68,7 @@ jobs:
         with:
           context: ./backend/
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/taski_backend:latest
+          tags: zulkex93/taski_backend:latest
 
   frontend_tests:
     runs-on: ubuntu-latest
@@ -115,7 +115,7 @@ jobs:
         with:
           context: ./frontend/
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/taski_frontend:latest
+          tags: zulkex93/taski_frontend:latest
 
   build_gateway_and_push_to_docker_hub:
     name: Push gateway Docker image to DockerHub
@@ -139,7 +139,7 @@ jobs:
         with:
           context: ./gateway/
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/taski_gateway:latest
+          tags: zulkex93/taski_gateway:latest
 
   deploy:
     runs-on: ubuntu-latest
@@ -177,15 +177,3 @@ jobs:
             sudo docker compose -f docker-compose.production.yml exec backend python manage.py migrate
             sudo docker compose -f docker-compose.production.yml exec backend python manage.py collectstatic --noinput
             sudo docker compose -f docker-compose.production.yml exec backend cp -r /app/collected_static/. /backend_static/static/
-
-  send_message:
-    runs-on: ubuntu-latest
-    needs: deploy
-    
-    steps:
-    - name: Send message
-      uses: appleboy/telegram-action@master
-      with:
-        to: ${{ secrets.TELEGRAM_TO }}
-        token: ${{ secrets.TELEGRAM_TOKEN }}
-        message: Деплой успешно выполнен!
