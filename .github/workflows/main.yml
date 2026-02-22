@@ -14,10 +14,10 @@ jobs:
     steps:
     # Копируем код проекта
     - name: Check out code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     # Устанавливаем Python с помощью action
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
     # В action setup-python@v4 передаём параметр — версию Python
       with:
         python-version: 3.12
