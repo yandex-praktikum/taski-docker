@@ -14,10 +14,10 @@ jobs:
     steps:
     # Копируем код проекта
     - name: Check out code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v3
     # Устанавливаем Python с помощью action
     - name: Set up Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v4
     # В action setup-python@v4 передаём параметр — версию Python
       with:
         python-version: 3.12
@@ -25,9 +25,8 @@ jobs:
     # устанавливаем зависимости проекта
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install setuptools
-        pip install flake8==6.0.0 flake8-isort==6.0.0
+        python -m pip install --upgrade pip setuptools wheel
+        pip install flake8==7.1.1 flake8-isort==6.1.1
     # Запускаем flake8
     - name: Test with flake8
       # Вызываем flake8 и указываем ему,
