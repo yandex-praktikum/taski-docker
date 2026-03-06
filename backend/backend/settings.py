@@ -8,7 +8,7 @@ SECRET_KEY = 'django-insecure-j_89af+30&&4qm*8z9_(^zz8p4-ho8z_m6ylm0s$h!-p@on1_^
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '123.123.123.123', 'tasks.sytes.net']
+ALLOWED_HOSTS = ['tasks.sytes.net', '158.160.212.165', 'localhost', '127.0.0.1', '127.0.0.1:8000', '123.123.123.123']
 
 
 # Application definition
