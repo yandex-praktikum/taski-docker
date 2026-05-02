@@ -1,0 +1,33 @@
+version: '3'
+
+volumes:
+  pg_data:
+  static:
+
+services:
+  db:
+    image: postgres:13
+    env_file: .env
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  backend:
+    image: polina3333/taski_backend:latest 
+    env_file: .env
+    volumes:
+      - static:/backend_static
+
+  frontend:
+    image: polina3333/taski_frontend:latest
+    env_file: .env
+    command: cp -r /app/build/. /frontend_static/
+    volumes:
+      - static:/frontend_static
+
+  gateway:
+    image: polina3333/taski_gateway:latest
+    env_file: .env
+    volumes:
+      - static:/staticfiles
+    ports:
+      - 8000:80
