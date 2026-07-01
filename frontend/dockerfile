@@ -1,0 +1,24 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Копируем package.json и package-lock.json
+COPY package*.json ./
+
+# Устанавливаем зависимости (игнорируем предупреждения)
+RUN npm install --no-audit --no-fund --legacy-peer-deps
+
+# Копируем все исходники
+COPY . .
+
+# Собираем проект (создаст папку build)
+RUN npm run build
+
+# Устанавливаем сервер глобально (чтобы не было интерактивного режима)
+RUN npm install -g serve
+
+# Открываем порт 8000
+EXPOSE 8000
+
+# Запускаем сервер со статикой из build
+CMD ["serve", "-s", "build", "-l", "8000"]
